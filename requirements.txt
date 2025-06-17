@@ -1,3 +1,0 @@
-playwright
-bs4
-pyyaml
