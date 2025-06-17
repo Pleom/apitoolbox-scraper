@@ -13,3 +13,9 @@ python extract.py https://apitoolbox.dev/supabase.json supabase --base https://a
 python extract.py https://apitoolbox.dev/lambda.json lambda-ai
 
 python extract.py https://machines-api-spec.fly.dev/swagger/doc.json fly-io
+
+python extract.py https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml gitlab --base https://gitlab.com
+
+python extract.py https://api-docs.render.com/openapi/6140fb3daeae351056086186 render
+
+python extract.py https://apitoolbox.dev/a.json gcp
