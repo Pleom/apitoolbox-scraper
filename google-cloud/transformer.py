@@ -7,30 +7,34 @@ import shutil
 import yaml
 import argparse
 
-def to_camel_case(text: str) -> str:
+def to_spaced_words(text: str) -> str:
     """
-    Convert a string to camelCase format
-    Example: 'security-advisories/get-global-advisory' -> 'advisoriesGetGlobalAdvisory'
+    Convert a string to spaced words format with first word capitalized
+    Examples: 
+    - 'security-advisories/get-global-advisory' -> 'Security advisories get global advisory'
+    - 'readAccessGroup' -> 'Read access group'
     """
-    # First, replace any non-alphanumeric characters with spaces
+    # First, split camelCase words by inserting spaces before uppercase letters
+    # This handles cases like 'readAccessGroup' -> 'read Access Group'
+    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    
+    # Then, replace any non-alphanumeric characters with spaces
     text = re.sub(r'[^a-zA-Z0-9]', ' ', text)
     
-    # Split by whitespace
-    words = text.split()
+    # Split by whitespace and filter out empty strings
+    words = [word for word in text.split() if word]
     
-    # Convert to camelCase
+    # Convert to spaced words format
     if not words:
         return ''
     
-    # First word starts with lowercase
-    result = words[0].lower()
-    
-    # Subsequent words start with uppercase
+    # First word starts with uppercase, rest are lowercase
+    result_words = [words[0].capitalize()]
     for word in words[1:]:
         if word:
-            result += word[0].upper() + word[1:].lower()
+            result_words.append(word.lower())
     
-    return result
+    return ' '.join(result_words)
 
 def create_directory(directory_path):
     """Create directory if it doesn't exist"""
@@ -609,9 +613,8 @@ class OpenAPIPathExtractor:
                                 # Extract all required information
                                 operation_id = self.safe_get(operation, 'operationId', f"{method}_{endpoint.replace('/', '_').replace('{', '').replace('}', '')}")
                                 
-                                # Only convert to camelCase if it's not already in a proper format
-                                if re.search(r'[^a-zA-Z0-9]', operation_id):
-                                    operation_id = to_camel_case(operation_id)
+                                # Convert to spaced words format (handles both camelCase and separator-based names)
+                                operation_id = to_spaced_words(operation_id)
                                 
                                 description = self.safe_get(operation, 'description', self.safe_get(operation, 'summary', ''))
                                 
